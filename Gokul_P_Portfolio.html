@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gokul P — YouTube Shorts Creator</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* Fallback fonts if Google Fonts fails */
+@font-face {
+  font-family: 'Bebas Neue';
+  src: local('Impact'), local('Arial Narrow');
+}
+</style>
+<style>
+  :root {
+    --red: #FF0033;
+    --red-dark: #CC0022;
+    --black: #0A0A0A;
+    --dark: #111111;
+    --card: #181818;
+    --border: #2A2A2A;
+    --white: #F5F0EB;
+    --muted: #888888;
+    --gold: #FFD700;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Syne', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    position: fixed;
+    width: 12px; height: 12px;
+    background: var(--red);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s, width 0.2s, height 0.2s;
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 36px; height: 36px;
+    border: 1.5px solid rgba(255,0,51,0.5);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: transform 0.15s ease, width 0.2s, height 0.2s;
+  }
+
+  /* Noise overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse 80% 60% at 70% 40%, rgba(255,0,51,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 80% at 20% 80%, rgba(255,0,51,0.06) 0%, transparent 50%);
+  }
+
+  .hero-lines {
+    position: absolute;
+    inset: 0;
+    background-image: 
+      repeating-linear-gradient(0deg, transparent, transparent 79px, rgba(255,255,255,0.02) 80px),
+      repeating-linear-gradient(90deg, transparent, transparent 79px, rgba(255,255,255,0.02) 80px);
+  }
+
+  nav {
+    position: relative;
+    z-index: 10;
+    padding: 28px 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    letter-spacing: 3px;
+    color: var(--white);
+  }
+  .nav-logo span { color: var(--red); }
+
+  .nav-links {
+    display: flex;
+    gap: 36px;
+    list-style: none;
+  }
+  .nav-links a {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--red); }
+
+  .hero-content {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 60px;
+    max-width: 900px;
+  }
+
+  .hero-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.2s;
+  }
+  .hero-tag::before {
+    content: '';
+    display: block;
+    width: 40px; height: 1px;
+    background: var(--red);
+  }
+
+  .hero-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(5rem, 14vw, 11rem);
+    line-height: 0.9;
+    letter-spacing: 2px;
+    color: var(--white);
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 0.4s;
+  }
+  .hero-name .red { color: var(--red); }
+
+  .hero-sub {
+    font-size: 1.1rem;
+    color: var(--muted);
+    margin-top: 24px;
+    font-weight: 400;
+    max-width: 500px;
+    line-height: 1.7;
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 0.6s;
+  }
+
+  .hero-cta {
+    margin-top: 40px;
+    display: flex;
+    gap: 16px;
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 0.8s;
+  }
+
+  .btn-primary {
+    padding: 14px 32px;
+    background: var(--red);
+    color: var(--white);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+  }
+  .btn-primary:hover { background: var(--red-dark); transform: translateY(-2px); }
+
+  .btn-outline {
+    padding: 14px 32px;
+    background: transparent;
+    color: var(--white);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+  }
+  .btn-outline:hover { border-color: var(--red); color: var(--red); }
+
+  /* Floating youtube badge */
+  .yt-badge {
+    position: absolute;
+    right: 80px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    opacity: 0;
+    animation: fadeIn 1s ease forwards 1.2s;
+  }
+  .yt-badge-inner {
+    width: 220px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 24px;
+    position: relative;
+  }
+  .yt-badge-inner::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--red);
+  }
+  .yt-play {
+    width: 50px; height: 50px;
+    background: var(--red);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    clip-path: polygon(0 0, 100% 50%, 0 100%);
+    padding-left: 6px;
+    font-size: 0;
+  }
+  .yt-badge-stat {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.4rem;
+    color: var(--white);
+    line-height: 1;
+  }
+  .yt-badge-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-top: 4px;
+    margin-bottom: 16px;
+  }
+
+  .hero-scroll {
+    position: relative;
+    z-index: 10;
+    padding: 24px 60px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 1.4s;
+  }
+  .scroll-line {
+    width: 60px; height: 1px;
+    background: var(--border);
+  }
+  .scroll-text {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* ===== STATS STRIP ===== */
+  .stats-strip {
+    background: var(--red);
+    padding: 20px 60px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    gap: 20px;
+    overflow: hidden;
+    position: relative;
+  }
+  .stat-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-shrink: 0;
+  }
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.2rem;
+    color: var(--black);
+    line-height: 1;
+  }
+  .stat-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(0,0,0,0.7);
+    line-height: 1.4;
+  }
+  .stat-divider {
+    width: 1px;
+    height: 36px;
+    background: rgba(0,0,0,0.2);
+  }
+
+  /* ===== SECTIONS ===== */
+  section {
+    padding: 100px 60px;
+    position: relative;
+  }
+
+  .section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    max-width: 60px;
+    height: 1px;
+    background: var(--red);
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    letter-spacing: 2px;
+    color: var(--white);
+    line-height: 1;
+    margin-bottom: 60px;
+  }
+
+  /* ===== CONTENT GRID ===== */
+  .content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  .content-card {
+    background: var(--card);
+    padding: 40px;
+    transition: background 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .content-card:hover { background: #1E1E1E; }
+  .content-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 0;
+    background: var(--red);
+    transition: height 0.3s ease;
+  }
+  .content-card:hover::before { height: 100%; }
+
+  .content-icon {
+    font-size: 2rem;
+    margin-bottom: 16px;
+  }
+  .content-card-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    letter-spacing: 2px;
+    color: var(--white);
+    margin-bottom: 12px;
+  }
+  .content-card-desc {
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+  .content-tag {
+    display: inline-block;
+    margin-top: 16px;
+    padding: 4px 12px;
+    background: rgba(255,0,51,0.1);
+    border: 1px solid rgba(255,0,51,0.3);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--red);
+  }
+
+  /* ===== ABOUT ===== */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 80px;
+    align-items: start;
+  }
+
+  .about-left { position: relative; }
+
+  .about-photo-frame {
+    width: 100%;
+    aspect-ratio: 3/4;
+    background: var(--card);
+    border: 1px solid var(--border);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .about-photo-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 8%;
+    display: block;
+  }
+  .about-photo-placeholder {
+    display: none;
+  }
+
+  .about-corner {
+    position: absolute;
+    bottom: -12px;
+    right: -12px;
+    width: 80px; height: 80px;
+    background: var(--red);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .about-corner-text {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    color: var(--white);
+    text-align: center;
+    line-height: 1.2;
+  }
+
+  .about-right {}
+
+  .about-bio {
+    font-size: 1.05rem;
+    color: #BBBBBB;
+    line-height: 1.85;
+    margin-bottom: 40px;
+  }
+
+  .about-highlight {
+    color: var(--white);
+    font-weight: 700;
+  }
+
+  .skills-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .skill-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    transition: border-color 0.2s;
+  }
+  .skill-item:hover { border-color: var(--red); }
+  .skill-dot {
+    width: 6px; height: 6px;
+    background: var(--red);
+    flex-shrink: 0;
+  }
+  .skill-name {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 1px;
+    color: var(--white);
+  }
+
+  /* ===== ACHIEVEMENT ===== */
+  .achievement-section {
+    background: var(--card);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .achievement-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+
+  .achievement-left {
+    padding-right: 80px;
+    border-right: 1px solid var(--border);
+  }
+
+  .achievement-right {
+    padding-left: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .big-number {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(5rem, 10vw, 8rem);
+    color: var(--red);
+    line-height: 0.9;
+    letter-spacing: 2px;
+  }
+
+  .big-number-label {
+    font-size: 1.1rem;
+    color: var(--white);
+    font-weight: 700;
+    margin-top: 16px;
+    margin-bottom: 12px;
+  }
+  .big-number-desc {
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  .milestone-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .milestone-item {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .milestone-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    color: rgba(255,0,51,0.3);
+    line-height: 1;
+    min-width: 40px;
+  }
+  .milestone-text strong {
+    display: block;
+    font-size: 0.95rem;
+    color: var(--white);
+    margin-bottom: 4px;
+  }
+  .milestone-text span {
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  /* ===== WHY PARTNER ===== */
+  .partner-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    margin-top: 0;
+  }
+
+  .partner-card {
+    background: var(--black);
+    padding: 40px 36px;
+    transition: background 0.2s;
+    position: relative;
+  }
+  .partner-card:hover { background: var(--card); }
+  .partner-card-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 4rem;
+    color: rgba(255,0,51,0.15);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .partner-card-title {
+    font-weight: 800;
+    font-size: 1rem;
+    color: var(--white);
+    margin-bottom: 12px;
+    letter-spacing: 0.5px;
+  }
+  .partner-card-desc {
+    font-size: 0.88rem;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  /* ===== CONTACT ===== */
+  .contact-section {
+    background: var(--red);
+    padding: 80px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+  .contact-section::before {
+    content: 'COLLAB';
+    position: absolute;
+    right: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18rem;
+    color: rgba(0,0,0,0.08);
+    letter-spacing: 10px;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  .contact-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .contact-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    color: var(--black);
+    letter-spacing: 3px;
+    line-height: 1;
+  }
+  .contact-sub {
+    font-size: 1rem;
+    color: rgba(0,0,0,0.6);
+    margin-top: 10px;
+  }
+
+  .contact-btn {
+    padding: 18px 40px;
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background 0.2s;
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .contact-btn:hover { background: #1A1A1A; }
+
+  /* ===== FOOTER ===== */
+  footer {
+    background: var(--black);
+    padding: 30px 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--border);
+  }
+  .footer-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 3px;
+    color: var(--muted);
+  }
+  .footer-logo span { color: var(--red); }
+  .footer-copy {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  /* ===== ANIMATIONS ===== */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: none;
+  }
+  /* Mobile fallback - show everything */
+  @media (max-width: 768px) {
+    .reveal {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  }
+
+  @media (max-width: 900px) {
+    nav, section, .stats-strip, .contact-section, footer { padding-left: 24px; padding-right: 24px; }
+    .hero-content { padding: 0 24px; }
+    .yt-badge { display: none; }
+    .about-grid, .achievement-inner, .content-grid, .partner-grid { grid-template-columns: 1fr; }
+    .achievement-left { padding-right: 0; border-right: none; border-bottom: 1px solid var(--border); padding-bottom: 60px; margin-bottom: 0; }
+    .achievement-right { padding-left: 0; padding-top: 60px; }
+    .contact-inner { flex-direction: column; gap: 32px; align-items: flex-start; }
+    .hero-scroll { padding-left: 24px; }
+  }
+
+  @media (max-width: 768px) {
+    .hero-tag, .hero-name, .hero-sub, .hero-cta, .hero-scroll {
+      opacity: 1 !important;
+      animation: none !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-lines"></div>
+
+  <nav>
+    <div class="nav-logo">GOKUL<span>.</span></div>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#content">Content</a></li>
+      <li><a href="#why">Partner</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li><a href="https://youtube.com/@truthway1?si=8TGmHdZMGEFlrCiW" target="_blank" style="color:var(--red);">▶ Channel</a></li>
+    </ul>
+  </nav>
+
+  <div class="hero-content">
+    <div class="hero-tag">YouTube Shorts Creator &nbsp;·&nbsp; Since 2024</div>
+    <div class="hero-name">GOKUL<br><span class="red">P.</span></div>
+    <p class="hero-sub">Crafting viral Funny AI & Commentary Shorts for English and Malayalam audiences. 160K+ views and counting.</p>
+    <div class="hero-cta">
+      <a href="#why" class="btn-primary">Partner With Me</a>
+      <a href="#content" class="btn-outline">View Content</a>
+    </div>
+  </div>
+
+  <div class="yt-badge">
+    <div class="yt-badge-inner">
+      <div class="yt-play"></div>
+      <div class="yt-badge-stat">160K+</div>
+      <div class="yt-badge-label">Total Views</div>
+      <div class="yt-badge-stat">2K+</div>
+      <div class="yt-badge-label">Subscribers</div>
+      <div class="yt-badge-stat">12</div>
+      <div class="yt-badge-label">Shorts Published</div>
+    </div>
+  </div>
+
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    <span class="scroll-text">Scroll to explore</span>
+  </div>
+</section>
+
+<!-- STATS STRIP -->
+<div class="stats-strip">
+  <div class="stat-item">
+    <div>
+      <div class="stat-num">2K+</div>
+      <div class="stat-label">Subscribers</div>
+    </div>
+  </div>
+  <div class="stat-divider"></div>
+  <div class="stat-item">
+    <div>
+      <div class="stat-num">160K+</div>
+      <div class="stat-label">Total Views</div>
+    </div>
+  </div>
+  <div class="stat-divider"></div>
+  <div class="stat-item">
+    <div>
+      <div class="stat-num">12</div>
+      <div class="stat-label">Shorts Published</div>
+    </div>
+  </div>
+  <div class="stat-divider"></div>
+  <div class="stat-item">
+    <div>
+      <div class="stat-num">6 Mo</div>
+      <div class="stat-label">Active Creator</div>
+    </div>
+  </div>
+  <div class="stat-divider"></div>
+  <div class="stat-item">
+    <div>
+      <div class="stat-num">2</div>
+      <div class="stat-label">Languages</div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTENT SECTION -->
+<section id="content">
+  <div class="section-label">What I Create</div>
+  <h2 class="section-title reveal">CONTENT &amp; NICHE</h2>
+
+  <div class="content-grid reveal">
+    <div class="content-card">
+      <div class="content-icon">🤖</div>
+      <div class="content-card-title">Funny AI Videos</div>
+      <p class="content-card-desc">Entertaining and humorous content built around AI-generated scenarios, trends, and tools. Relatable, shareable, and designed for the Shorts algorithm.</p>
+      <div class="content-tag">Trending Niche</div>
+    </div>
+    <div class="content-card">
+      <div class="content-icon">🎙️</div>
+      <div class="content-card-title">Commentary Shorts</div>
+      <p class="content-card-desc">Opinion and reaction-style videos on trending topics. Fast-paced, engaging, and optimized for high watch-time and shares.</p>
+      <div class="content-tag">High Engagement</div>
+    </div>
+    <div class="content-card">
+      <div class="content-icon">🌐</div>
+      <div class="content-card-title">Bilingual Content</div>
+      <p class="content-card-desc">Fluent creator in both English and Malayalam — reaching a wide South Indian and global audience. Rare bilingual edge in the creator market.</p>
+      <div class="content-tag">Unique Advantage</div>
+    </div>
+    <div class="content-card">
+      <div class="content-icon">✍️</div>
+      <div class="content-card-title">Full Production</div>
+      <p class="content-card-desc">End-to-end content creation: original scriptwriting, video editing, and publishing. No outsourcing — authentic, fast-turnaround content.</p>
+      <div class="content-tag">Self-Produced</div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" style="background: var(--card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+  <div class="section-label">Who I Am</div>
+  <h2 class="section-title reveal">ABOUT ME</h2>
+
+  <div class="about-grid">
+    <div class="about-left reveal">
+      <div class="about-photo-frame" id="photoFrame" style="cursor:pointer;" title="Click to embed your photo">
+        <img id="profileImg" src="" alt="Gokul P" 
+          style="display:none; width:100%; height:100%; object-fit:cover; object-position:center 15%;" />
+        <div id="photoPlaceholder" style="width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; background:linear-gradient(145deg,#1a0a0a,#2d1010,#0a1a0a); position:relative;">
+          <div style="position:absolute;inset:0;background-image:repeating-linear-gradient(0deg,transparent,transparent 39px,rgba(255,255,255,0.03) 40px),repeating-linear-gradient(90deg,transparent,transparent 39px,rgba(255,255,255,0.03) 40px);"></div>
+          <div style="position:absolute;top:0;left:0;right:0;height:4px;background:var(--red);"></div>
+          <div style="position:absolute;top:20px;left:20px;width:40px;height:40px;border-left:2px solid rgba(255,0,51,0.4);border-top:2px solid rgba(255,0,51,0.4);"></div>
+          <div style="position:absolute;bottom:20px;right:20px;width:40px;height:40px;border-right:2px solid rgba(255,0,51,0.4);border-bottom:2px solid rgba(255,0,51,0.4);"></div>
+          <div style="width:150px;height:150px;border-radius:50%;background:radial-gradient(circle,#2a0a0a,#1a0505);border:3px solid var(--red);display:flex;align-items:center;justify-content:center;box-shadow:0 0 40px rgba(255,0,51,0.3);position:relative;z-index:2;">
+            <span style="font-family:'Bebas Neue',sans-serif;font-size:4rem;color:var(--red);letter-spacing:4px;">GP</span>
+          </div>
+          <div style="margin-top:20px;position:relative;z-index:2;text-align:center;">
+            <div style="font-family:'Space Mono',monospace;font-size:0.65rem;letter-spacing:4px;color:rgba(255,255,255,0.4);text-transform:uppercase;">Click to add photo</div>
+          </div>
+        </div>
+      </div>
+      <input type="file" id="photoInput" accept="image/*" style="display:none" />
+      <button onclick="document.getElementById('photoInput').click()" style="
+        margin-top: 16px;
+        width: 100%;
+        padding: 14px;
+        background: var(--red);
+        color: white;
+        font-family: 'Space Mono', monospace;
+        font-size: 0.75rem;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        border: none;
+        cursor: pointer;
+        clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+      ">📸 Click Here to Add Your Photo</button>
+          <!-- Corner decoration -->
+          <div style="position:absolute; bottom:20px; right:20px; width:40px; height:40px;
+            border-right:2px solid rgba(255,0,51,0.4); border-bottom:2px solid rgba(255,0,51,0.4);"></div>
+          <div style="position:absolute; top:20px; left:20px; width:40px; height:40px;
+            border-left:2px solid rgba(255,0,51,0.4); border-top:2px solid rgba(255,0,51,0.4);"></div>
+        </div>
+      </div>
+        
+      </div>
+      </div>
+      </div>
+      <div class="about-corner">
+        <div class="about-corner-text">INDIA<br>🇮🇳</div>
+      </div>
+    </div>
+    <div class="about-right reveal">
+      <p class="about-bio">
+        I'm <span class="about-highlight">Gokul P</span>, a YouTube Shorts creator from India focused on <span class="about-highlight">Funny AI content and Commentary Videos</span>. In just 6 months — while also preparing for exams — I built a channel to <span class="about-highlight">2,000+ subscribers and 160,000+ total views</span>.
+        <br><br>
+        My content targets both English and Malayalam-speaking audiences, giving brands access to a <span class="about-highlight">unique bilingual, South Indian demographic</span> that's hard to reach through typical influencers.
+        <br><br>
+        I handle everything myself — from idea and script to edit and publish — keeping content <span class="about-highlight">authentic, fast, and consistent</span>.
+      </p>
+      <div class="skills-list">
+        <div class="skill-item"><div class="skill-dot"></div><span class="skill-name">Video Editing</span></div>
+        <div class="skill-item"><div class="skill-dot"></div><span class="skill-name">Scriptwriting (EN)</span></div>
+        <div class="skill-item"><div class="skill-dot"></div><span class="skill-name">Scriptwriting (ML)</span></div>
+        <div class="skill-item"><div class="skill-dot"></div><span class="skill-name">AI Tools & Trends</span></div>
+        <div class="skill-item"><div class="skill-dot"></div><span class="skill-name">Content Strategy</span></div>
+        <div class="skill-item"><div class="skill-dot"></div><span class="skill-name">Audience Growth</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ACHIEVEMENT -->
+<section class="achievement-section">
+  <div class="achievement-inner">
+    <div class="achievement-left">
+      <div class="section-label">Key Achievement</div>
+      <div class="big-number">2K+</div>
+      <div class="big-number-label">Subscribers from a Single Short</div>
+      <p class="big-number-desc">One video. Thousands of new subscribers. This milestone proves strong content instincts, viral thinking, and the ability to capture attention at scale — exactly what brands need.</p>
+    </div>
+    <div class="achievement-right">
+      <ul class="milestone-list">
+        <li class="milestone-item reveal">
+          <div class="milestone-num">01</div>
+          <div class="milestone-text">
+            <strong>Launched YouTube Channel — 2024</strong>
+            <span>Started creating Funny AI & Commentary Shorts from scratch</span>
+          </div>
+        </li>
+        <li class="milestone-item reveal">
+          <div class="milestone-num">02</div>
+          <div class="milestone-text">
+            <strong>Hit 160,000+ Total Views</strong>
+            <span>Organic reach across 12 published Shorts</span>
+          </div>
+        </li>
+        <li class="milestone-item reveal">
+          <div class="milestone-num">03</div>
+          <div class="milestone-text">
+            <strong>Viral Short — 2K Subs in One Video</strong>
+            <span>Single Short drove majority of channel subscriber growth</span>
+          </div>
+        </li>
+        <li class="milestone-item reveal">
+          <div class="milestone-num">04</div>
+          <div class="milestone-text">
+            <strong>Bilingual Creator — EN & Malayalam</strong>
+            <span>Targeting two distinct language audiences simultaneously</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- WHY PARTNER -->
+<section id="why">
+  <div class="section-label">For Business Owners</div>
+  <h2 class="section-title reveal">WHY PARTNER WITH ME</h2>
+
+  <div class="partner-grid reveal">
+    <div class="partner-card">
+      <div class="partner-card-num">01</div>
+      <div class="partner-card-title">Proven Viral Potential</div>
+      <p class="partner-card-desc">I've already demonstrated the ability to create content that spreads — 2K subscribers from a single Short is evidence of real audience resonance, not luck.</p>
+    </div>
+    <div class="partner-card">
+      <div class="partner-card-num">02</div>
+      <div class="partner-card-title">Bilingual Reach</div>
+      <p class="partner-card-desc">English + Malayalam content gives your brand access to a niche South Indian demographic that mainstream influencers often miss entirely.</p>
+    </div>
+    <div class="partner-card">
+      <div class="partner-card-num">03</div>
+      <div class="partner-card-title">AI & Tech Niche</div>
+      <p class="partner-card-desc">Funny AI content is one of the fastest-growing Short-form niches. Early placement in this space gives your brand a first-mover advantage.</p>
+    </div>
+    <div class="partner-card">
+      <div class="partner-card-num">04</div>
+      <div class="partner-card-title">Authentic & Affordable</div>
+      <p class="partner-card-desc">Smaller creators deliver higher trust and engagement rates than mega-influencers. You get genuine audience connection at a fraction of the cost.</p>
+    </div>
+    <div class="partner-card">
+      <div class="partner-card-num">05</div>
+      <div class="partner-card-title">Full Creative Control</div>
+      <p class="partner-card-desc">I write, edit, and publish everything myself — no agency middlemen, no delays. Fast turnaround and a consistent brand voice every time.</p>
+    </div>
+    <div class="partner-card">
+      <div class="partner-card-num">06</div>
+      <div class="partner-card-title">Rapid Growth Trajectory</div>
+      <p class="partner-card-desc">2K subs in 6 months while studying for exams. Imagine what focused, full-time content creation looks like. You're investing early in an ascending creator.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<div class="contact-section" id="contact">
+  <div class="contact-inner">
+    <div>
+      <div class="contact-title">LET'S WORK<br>TOGETHER.</div>
+      <p class="contact-sub">Brand deals · Sponsorships · Collaborations · Promotions</p>
+      <p style="margin-top:10px; font-family:'Space Mono',monospace; font-size:0.72rem; color:rgba(0,0,0,0.55); letter-spacing:1px;">
+        📧 <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="f39b968196949c98869fc2c1c0b3949e929a9fdd909c9e">[email&#160;protected]</a> &nbsp;·&nbsp;
+        <a href="https://youtube.com/@truthway1?si=8TGmHdZMGEFlrCiW" target="_blank" style="color:rgba(0,0,0,0.65); text-decoration:none;">▶ youtube.com/@truthway1</a>
+      </p>
+    </div>
+    <a href="/cdn-cgi/l/email-protection#d3bbb6a1b6b4bcb8a6bfe2e1e093b4beb2babffdb0bcbe" class="contact-btn">Get In Touch →</a>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">GOKUL<span>P.</span></div>
+  <div class="footer-copy">© 2025 Gokul P &nbsp;·&nbsp; YouTube Shorts Creator &nbsp;·&nbsp; India</div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  function animateCursor() {
+    cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
+    rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+    requestAnimationFrame(animateCursor);
+  }
+  animateCursor();
+
+  // Photo embed system
+  const photoFrame = document.getElementById('photoFrame');
+  const photoInput = document.getElementById('photoInput');
+  const profileImg = document.getElementById('profileImg');
+  const photoPlaceholder = document.getElementById('photoPlaceholder');
+
+  // Fix: directly trigger file input
+  photoFrame.addEventListener('click', function(e) {
+    photoInput.click();
+  });
+  // Also make placeholder clickable
+  document.getElementById('photoPlaceholder').addEventListener('click', function(e) {
+    e.stopPropagation();
+    photoInput.click();
+  });
+
+  photoInput.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+      const b64 = ev.target.result;
+      profileImg.src = b64;
+      profileImg.style.display = 'block';
+      photoPlaceholder.style.display = 'none';
+
+      // Embed photo into HTML and trigger download
+      const html = document.documentElement.outerHTML;
+      // Replace placeholder with actual embedded image
+      const newHtml = html
+        .replace('id="profileImg" src=""', 'id="profileImg" src="' + b64 + '"')
+        .replace('profileImg.style.display = \'block\'', '')
+        .replace('profileImg.style.display = "block"', '');
+      
+      // Auto-download the new embedded HTML
+      const blob = new Blob([newHtml], {type: 'text/html'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'Gokul_P_Portfolio_with_photo.html';
+      a.click();
+      
+      alert('✅ Photo added! A new file "Gokul_P_Portfolio_with_photo.html" has been downloaded. Upload THAT file to Netlify!');
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // Load saved photo
+  try {
+    const saved = localStorage.getItem('gp_photo');
+    if (saved) {
+      profileImg.src = saved;
+      profileImg.style.display = 'block';
+      photoPlaceholder.style.display = 'none';
+    }
+  } catch(e) {}
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.fo
